@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,11 +26,19 @@ import com.amu.common.utils.R;
  * @email mujinmj@gmail.com
  * @date 2022-06-13 20:45:30
  */
+@RefreshScope
 @RestController
 @RequestMapping("coupon/coupon")
 public class CouponController {
     @Autowired
     private CouponService couponService;
+
+    @Value("${spring.application.name}")
+    private String name;
+    @RequestMapping("test")
+    public R test() {
+        return R.ok().put("spring.application.name",name);
+    }
 
     /**
      * 列表
