@@ -1,6 +1,7 @@
 package com.amu.gulimall.product.controller;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,9 +38,9 @@ public class CategoryController {
     @RequestMapping("/list/tree")
     //@RequiresPermissions("product:category:list")
     public R list(){
-        List<CategoryEntity> page = categoryService.listWithTree();
+        List<CategoryEntity> entities = categoryService.listWithTree();
 
-        return R.ok().put("page", page);
+        return R.ok().put("page", entities);
     }
 
 
@@ -74,6 +75,15 @@ public class CategoryController {
     public R update(@RequestBody CategoryEntity category){
 		categoryService.updateById(category);
 
+        return R.ok();
+    }
+
+    /**
+     *  批量修改
+     */
+    @RequestMapping("/update/sort")
+    public R updateSort (@RequestBody CategoryEntity[] categoryEntities) {
+        categoryService.updateBatchById(Arrays.asList(categoryEntities));
         return R.ok();
     }
 

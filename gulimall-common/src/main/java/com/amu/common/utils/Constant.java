@@ -8,9 +8,9 @@
 
 package com.amu.common.utils;
 
-import com.amu.common.validator.group.AliyunGroup;
-import com.amu.common.validator.group.QcloudGroup;
-import com.amu.common.validator.group.QiniuGroup;
+import com.amu.common.valid.AliyunGroup;
+import com.amu.common.valid.QcloudGroup;
+import com.amu.common.valid.QiniuGroup;
 
 
 import java.util.Optional;
