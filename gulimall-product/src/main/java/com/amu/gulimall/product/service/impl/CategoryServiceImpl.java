@@ -1,10 +1,10 @@
 package com.amu.gulimall.product.service.impl;
 
+import com.amu.gulimall.product.service.CategoryBrandRelationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -16,11 +16,14 @@ import com.amu.common.utils.Query;
 import com.amu.gulimall.product.dao.CategoryDao;
 import com.amu.gulimall.product.entity.CategoryEntity;
 import com.amu.gulimall.product.service.CategoryService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
+    @Autowired
+    CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -55,6 +58,29 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
         // 采用逻辑删除
         baseMapper.deleteBatchIds(asList);
+    }
+
+    @Override
+    public Long[] findCatelogPath(Long catelogId) {
+        List<Long> list = new ArrayList<>();
+        // 找它的父id
+        while (catelogId != 0) {
+            CategoryEntity entity = this.getById(catelogId);
+            if (entity == null) {
+                break;
+            }
+            list.add(catelogId);
+            catelogId = entity.getParentCid();
+        }
+        Collections.reverse(list);
+        return list.toArray(new Long[0]);
+    }
+
+    @Transactional
+    @Override
+    public void updateCascade(CategoryEntity category) {
+        this.updateById(category);
+        categoryBrandRelationService.updateCategory(category.getCatId(),category.getName());
     }
 
     private List<CategoryEntity> getChildrens(CategoryEntity entity,List<CategoryEntity> categoryEntities) {

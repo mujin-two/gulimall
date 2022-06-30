@@ -1,21 +1,24 @@
 package com.amu.gulimall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.amu.gulimall.product.entity.AttrAttrgroupRelationEntity;
+import com.amu.gulimall.product.entity.AttrEntity;
+import com.amu.gulimall.product.service.AttrAttrgroupRelationService;
+import com.amu.gulimall.product.service.AttrService;
+import com.amu.gulimall.product.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 import com.amu.gulimall.product.entity.AttrGroupEntity;
 import com.amu.gulimall.product.service.AttrGroupService;
 import com.amu.common.utils.PageUtils;
 import com.amu.common.utils.R;
-
+import org.w3c.dom.Attr;
 
 
 /**
@@ -31,6 +34,15 @@ public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
 
+    @Autowired
+    private AttrAttrgroupRelationService relationService;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private AttrService attrService;
+
     /**
      * 列表
      */
@@ -43,23 +55,47 @@ public class AttrGroupController {
     }
 
 
+    @Transactional
+    @GetMapping("/{attrGroupId}/attr/relation")
+    //@RequiresPermissions("product:attrgroup:list")
+    public R list(@PathVariable("attrGroupId") Long attrGroupId){
+        List<AttrAttrgroupRelationEntity> lists = relationService.listById(attrGroupId);
+        List<AttrEntity> page = attrService.queryRelation(lists);
+        return R.ok().put("data", page);
+    }
+
+    // 查询所有未关联属性
+    @GetMapping("/{attrGroupId}/noattr/relation")
+    //@RequiresPermissions("product:attrgroup:list")
+    public R listNoattr(@RequestParam Map<String, Object> params,
+                        @PathVariable("attrGroupId") Long attrGroupId){
+        PageUtils page = attrService.queryNoRelation(params,attrGroupId);
+
+        return R.ok().put("page", page);
+    }
+
     @RequestMapping("/list/{catelogId}")
     //@RequiresPermissions("product:attrgroup:list")
-    public R list(@RequestParam Map<String, Object> params,
+    public R listRelation(@RequestParam Map<String, Object> params,
                   @PathVariable("catelogId") Long catelogId){
         PageUtils page = attrGroupService.queryPage(params,catelogId);
 
         return R.ok().put("page", page);
     }
 
-
     /**
      * 信息
      */
-    @RequestMapping("/info/{attrGroupId}")
+    @RequestMapping("/info/{attrGroupId}/{catelogId}")
     //@RequiresPermissions("product:attrgroup:info")
-    public R info(@PathVariable("attrGroupId") Long attrGroupId){
+    public R info(@PathVariable("attrGroupId") Long attrGroupId,
+                  @PathVariable("catelogId") Long catelogId){
 		AttrGroupEntity attrGroup = attrGroupService.getById(attrGroupId);
+		if (attrGroup == null) {
+		    attrGroup = new AttrGroupEntity();
+        }
+
+		attrGroup.setCatelogPath(categoryService.findCatelogPath(catelogId));
 
         return R.ok().put("attrGroup", attrGroup);
     }
@@ -71,6 +107,15 @@ public class AttrGroupController {
     //@RequiresPermissions("product:attrgroup:save")
     public R save(@RequestBody AttrGroupEntity attrGroup){
 		attrGroupService.save(attrGroup);
+
+        return R.ok();
+    }
+    /*
+     * 增加关联关系
+     */
+    @PostMapping("/attr/relation")
+    public R saveRelation(@RequestBody AttrAttrgroupRelationEntity[] entities) {
+        attrGroupService.saveRelation(entities);
 
         return R.ok();
     }
@@ -97,4 +142,14 @@ public class AttrGroupController {
         return R.ok();
     }
 
+    /**
+     * 删除关联关系
+     */
+    @RequestMapping("/attr/relation/delete")
+    //@RequiresPermissions("product:attrgroup:delete")
+    public R deleteRelation(@RequestBody AttrAttrgroupRelationEntity[] relationEntities){
+//        attrGroupService.removeByIds(Arrays.asList(attrGroupIds));
+        relationService.delete(relationEntities);
+        return R.ok();
+    }
 }

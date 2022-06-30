@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.amu.common.utils.PageUtils;
 import com.amu.gulimall.product.entity.AttrAttrgroupRelationEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,9 @@ import java.util.Map;
 public interface AttrAttrgroupRelationService extends IService<AttrAttrgroupRelationEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void delete(AttrAttrgroupRelationEntity[] relationEntities);
+
+    List<AttrAttrgroupRelationEntity> listById(Long attrGroupId);
 }
 

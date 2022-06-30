@@ -55,4 +55,5 @@ class GulimallThirdPartyApplicationTests {
         System.out.println("上传完成");
     }
 
+
 }

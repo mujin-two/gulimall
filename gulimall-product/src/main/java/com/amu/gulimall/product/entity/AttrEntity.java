@@ -33,6 +33,10 @@ public class AttrEntity implements Serializable {
 	 */
 	private Integer searchType;
 	/**
+	 * 是否需要多个值[0-不需要，1-需要]
+	 */
+	private Integer valueType;
+	/**
 	 * 属性图标
 	 */
 	private String icon;

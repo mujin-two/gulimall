@@ -1,5 +1,6 @@
 package com.amu.gulimall.product.service;
 
+import com.amu.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.amu.common.utils.PageUtils;
 import com.amu.gulimall.product.entity.AttrGroupEntity;
@@ -18,5 +19,7 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     PageUtils queryPage(Map<String, Object> params, Long catelogId);
+
+    void saveRelation(AttrAttrgroupRelationEntity[] entities);
 }
 
