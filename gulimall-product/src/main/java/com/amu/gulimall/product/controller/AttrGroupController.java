@@ -1,15 +1,21 @@
 package com.amu.gulimall.product.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.amu.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import com.amu.gulimall.product.entity.AttrEntity;
 import com.amu.gulimall.product.service.AttrAttrgroupRelationService;
 import com.amu.gulimall.product.service.AttrService;
 import com.amu.gulimall.product.service.CategoryService;
+import com.amu.gulimall.product.vo.AttrGroupWithAttrVo;
+import com.amu.gulimall.product.vo.AttrVo;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -72,6 +78,16 @@ public class AttrGroupController {
         PageUtils page = attrService.queryNoRelation(params,attrGroupId);
 
         return R.ok().put("page", page);
+    }
+
+    /**
+     *  获取分类下所有分组和关联属性
+     */
+    @GetMapping("/{catelogId}/withattr")
+    public R attrList(@PathVariable("catelogId") Long catelogId) {
+        List<AttrGroupWithAttrVo> attrGroupWithAttrVos = attrGroupService.listAttrGroupWithAttrsByCatelogId(catelogId);
+
+        return R.ok().put("data",attrGroupWithAttrVos);
     }
 
     @RequestMapping("/list/{catelogId}")

@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement // begin management
 @MapperScan("com.amu.gulimall.product.dao")
-public class MyBatisConfig {
+public class ProductMyBatisConfig {
 
     // import page plugin
     @Bean

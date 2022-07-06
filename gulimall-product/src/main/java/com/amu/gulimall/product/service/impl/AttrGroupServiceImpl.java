@@ -4,7 +4,11 @@ import com.amu.gulimall.product.dao.AttrAttrgroupRelationDao;
 import com.amu.gulimall.product.dao.AttrDao;
 import com.amu.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import com.amu.gulimall.product.entity.AttrEntity;
+import com.amu.gulimall.product.service.AttrAttrgroupRelationService;
 import com.amu.gulimall.product.service.AttrService;
+import com.amu.gulimall.product.vo.AttrGroupWithAttrVo;
+import com.amu.gulimall.product.vo.AttrVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -32,6 +37,9 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
     @Autowired
     AttrService attrService;
+
+    @Autowired
+    AttrAttrgroupRelationService relationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -77,5 +85,33 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
                 }
             }
         }
+    }
+
+    @Override
+    public List<AttrGroupWithAttrVo> listAttrGroupWithAttrsByCatelogId(Long catelogId) {
+        // 查询当前分类下的所有分组
+        List<AttrGroupEntity> groupEntities = this.list(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catelogId));
+
+        // 封装当前分组下的所有关联属性
+        List<AttrGroupWithAttrVo> attrGroupWithAttrVos = groupEntities.stream().map((item) -> {
+            AttrGroupWithAttrVo attrGroupWithAttrVo = new AttrGroupWithAttrVo();
+            BeanUtils.copyProperties(item, attrGroupWithAttrVo);
+
+            // 查询所有当前分组下的分组列表
+            List<AttrAttrgroupRelationEntity> relationEntities = relationService.listById(item.getAttrGroupId());
+            List<AttrVo> attrs = new ArrayList<>();
+            if (relationEntities != null) {
+                List<AttrEntity> attrEntities = attrService.queryRelation(relationEntities);
+                attrs = attrEntities.stream().map((attr) -> {
+                    AttrVo attrVo = new AttrVo();
+                    BeanUtils.copyProperties(attr, attrVo);
+                    attrVo.setAttrGroupId(item.getAttrGroupId());
+                    return attrVo;
+                }).collect(Collectors.toList());
+            }
+            attrGroupWithAttrVo.setAttrs(attrs);
+            return attrGroupWithAttrVo;
+        }).collect(Collectors.toList());
+        return attrGroupWithAttrVos;
     }
 }

@@ -1,14 +1,13 @@
 package com.amu.gulimall.ware.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.amu.gulimall.ware.vo.MergeVo;
+import com.amu.gulimall.ware.vo.PurchaseDoneVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.amu.gulimall.ware.entity.PurchaseEntity;
 import com.amu.gulimall.ware.service.PurchaseService;
@@ -29,6 +28,46 @@ import com.amu.common.utils.R;
 public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;
+
+    /**
+     * 提交采购
+     */
+    @PostMapping("/done")
+    public R done(@RequestBody PurchaseDoneVo purchaseDoneVo) {
+        purchaseService.done(purchaseDoneVo);
+
+        return R.ok();
+    }
+
+    /**
+     * 领取采购
+     */
+    @PostMapping("/receive")
+    public R receive(@RequestBody List<Long> purchaseOrderIds) {
+        purchaseService.purchaseOrderReceive(purchaseOrderIds);
+
+        return R.ok();
+    }
+
+    /**
+     * 合并到整单
+     */
+    @PostMapping("/merge")
+    public R merge(@RequestBody MergeVo mergeVo) {
+        purchaseService.mergePurchase(mergeVo);
+
+        return R.ok();
+    }
+
+    /**
+     * 查询新建和已领取的采购单
+     */
+    @GetMapping("/unreceive/list")
+    public R unreceiveList(@RequestParam Map<String, Object> params) {
+        PageUtils page = purchaseService.queryPageUnreceivePurchase(params);
+
+        return R.ok().put("page", page);
+    }
 
     /**
      * 列表
@@ -85,5 +124,7 @@ public class PurchaseController {
 
         return R.ok();
     }
+
+
 
 }
