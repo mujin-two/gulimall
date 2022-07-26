@@ -1,9 +1,8 @@
-package com.amu.gulimall.product.controller;
+package com.amu.gulimall.product.app;
 
 import java.util.Arrays;
 import java.util.Map;
 
-import com.amu.gulimall.product.vo.SpuSaveVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

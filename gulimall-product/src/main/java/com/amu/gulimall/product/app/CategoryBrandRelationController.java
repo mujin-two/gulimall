@@ -1,4 +1,4 @@
-package com.amu.gulimall.product.controller;
+package com.amu.gulimall.product.app;
 
 import com.amu.common.utils.PageUtils;
 import com.amu.common.utils.R;

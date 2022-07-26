@@ -1,24 +1,23 @@
 package com.amu.gulimall.ware.service.impl;
 
+import com.amu.common.to.SkuHasStockVo;
+import com.amu.common.utils.PageUtils;
+import com.amu.common.utils.Query;
 import com.amu.common.utils.R;
-import com.amu.gulimall.ware.entity.WareInfoEntity;
+import com.amu.gulimall.ware.dao.WareSkuDao;
+import com.amu.gulimall.ware.entity.WareSkuEntity;
 import com.amu.gulimall.ware.feign.ProductFeignService;
-import com.amu.gulimall.ware.service.WareInfoService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
+import com.amu.gulimall.ware.service.WareSkuService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.amu.common.utils.PageUtils;
-import com.amu.common.utils.Query;
-
-import com.amu.gulimall.ware.dao.WareSkuDao;
-import com.amu.gulimall.ware.entity.WareSkuEntity;
-import com.amu.gulimall.ware.service.WareSkuService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("wareSkuService")
@@ -72,6 +71,19 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         } else {
             this.baseMapper.addStock(skuId,wareId,skuNum);
         }
+    }
+
+    @Override
+    public List<SkuHasStockVo> hasStock(List<Long> skuIds) {
+        List<SkuHasStockVo> collect = skuIds.stream().map(skuId -> {
+            SkuHasStockVo vo = new SkuHasStockVo();
+            // 查询库存
+            Long count = this.baseMapper.getSkuStock(skuId);
+            vo.setHasStock(count != null && count > 0);
+            vo.setSkuId(skuId);
+            return vo;
+        }).collect(Collectors.toList());
+        return collect;
     }
 
 }

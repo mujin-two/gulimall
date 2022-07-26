@@ -1,10 +1,9 @@
-package com.amu.gulimall.product.controller;
+package com.amu.gulimall.product.app;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.amu.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import com.amu.gulimall.product.entity.ProductAttrValueEntity;
 import com.amu.gulimall.product.service.ProductAttrValueService;
 import com.amu.gulimall.product.vo.AttrRespVo;
@@ -12,7 +11,6 @@ import com.amu.gulimall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.amu.gulimall.product.entity.AttrEntity;
 import com.amu.gulimall.product.service.AttrService;
 import com.amu.common.utils.PageUtils;
 import com.amu.common.utils.R;

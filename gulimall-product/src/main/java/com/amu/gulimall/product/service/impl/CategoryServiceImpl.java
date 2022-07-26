@@ -1,6 +1,7 @@
 package com.amu.gulimall.product.service.impl;
 
 import com.amu.gulimall.product.service.CategoryBrandRelationService;
+import com.amu.gulimall.product.vo.Catelog2Vo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,6 @@ import com.amu.gulimall.product.dao.CategoryDao;
 import com.amu.gulimall.product.entity.CategoryEntity;
 import com.amu.gulimall.product.service.CategoryService;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
@@ -81,6 +81,53 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public void updateCascade(CategoryEntity category) {
         this.updateById(category);
         categoryBrandRelationService.updateCategory(category.getCatId(),category.getName());
+    }
+
+    @Override
+    public List<CategoryEntity> getLevel1Categorys() {
+        return baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid",0));
+    }
+
+    @Override
+    public Map<String, List<Catelog2Vo>> getCatelogJson() {
+
+        // 添加缓存优化
+        List<CategoryEntity> selectList = baseMapper.selectList(null);
+
+
+        // 查出所有1级分类
+        List<CategoryEntity> level1Categorys = getParent_cid(selectList,0L);
+        // 封装数据
+        Map<String, List<Catelog2Vo>> parent_cid = level1Categorys.stream().collect(Collectors.toMap(k -> k.getCatId().toString(), v -> {
+            // 1、查到这个一级分类所有对应的二级分类
+            List<Catelog2Vo> value = null;
+            List<CategoryEntity> entities = getParent_cid(selectList,v.getCatId());
+            if (entities != null) {
+                value = entities.stream().map(item2 -> {
+                    Catelog2Vo catelog2Vo = new Catelog2Vo(
+                            v.getCatId().toString(), null, item2.getCatId().toString(), item2.getName());
+                    // 2、查询二级分类对应的三级分类封装成vo
+                    List<CategoryEntity> entities3 = getParent_cid(selectList,item2.getCatId());
+                    if (entities3 != null) {
+                        List<Catelog2Vo.Catelog3Vo> level3Catelogs = entities3.stream().map(item3 -> {
+                            Catelog2Vo.Catelog3Vo catelog3Vo =
+                                    new Catelog2Vo.Catelog3Vo(
+                                            item2.getCatId().toString(),item3.getCatId().toString(),item3.getName());
+                            return catelog3Vo;
+                        }).collect(Collectors.toList());
+                        catelog2Vo.setCatalog3List(level3Catelogs);
+                    }
+                    return catelog2Vo;
+                }).collect(Collectors.toList());
+            }
+
+            return value;
+        }));
+        return parent_cid;
+    }
+
+    private List<CategoryEntity> getParent_cid(List<CategoryEntity> selectList, Long parent_cid) {
+        return selectList.stream().filter(item -> item.getParentCid() == parent_cid).collect(Collectors.toList());
     }
 
     private List<CategoryEntity> getChildrens(CategoryEntity entity,List<CategoryEntity> categoryEntities) {

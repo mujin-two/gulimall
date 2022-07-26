@@ -1,5 +1,6 @@
 package com.amu.gulimall.product.service;
 
+import com.amu.gulimall.product.vo.Catelog2Vo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.amu.common.utils.PageUtils;
 import com.amu.gulimall.product.entity.CategoryEntity;
@@ -25,5 +26,9 @@ public interface CategoryService extends IService<CategoryEntity> {
     Long[] findCatelogPath(Long catelogId);
 
     void updateCascade(CategoryEntity category);
+
+    List<CategoryEntity> getLevel1Categorys();
+
+    Map<String, List<Catelog2Vo>> getCatelogJson();
 }
 

@@ -1,10 +1,8 @@
-package com.amu.gulimall.product.controller;
+package com.amu.gulimall.product.app;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.amu.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import com.amu.gulimall.product.entity.AttrEntity;
@@ -12,10 +10,6 @@ import com.amu.gulimall.product.service.AttrAttrgroupRelationService;
 import com.amu.gulimall.product.service.AttrService;
 import com.amu.gulimall.product.service.CategoryService;
 import com.amu.gulimall.product.vo.AttrGroupWithAttrVo;
-import com.amu.gulimall.product.vo.AttrVo;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +18,6 @@ import com.amu.gulimall.product.entity.AttrGroupEntity;
 import com.amu.gulimall.product.service.AttrGroupService;
 import com.amu.common.utils.PageUtils;
 import com.amu.common.utils.R;
-import org.w3c.dom.Attr;
 
 
 /**
