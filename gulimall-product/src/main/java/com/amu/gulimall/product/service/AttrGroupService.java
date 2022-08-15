@@ -2,6 +2,7 @@ package com.amu.gulimall.product.service;
 
 import com.amu.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import com.amu.gulimall.product.vo.AttrGroupWithAttrVo;
+import com.amu.gulimall.product.vo.SpuItemAttrGroupVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.amu.common.utils.PageUtils;
 import com.amu.gulimall.product.entity.AttrGroupEntity;
@@ -25,5 +26,7 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
     void saveRelation(AttrAttrgroupRelationEntity[] entities);
 
     List<AttrGroupWithAttrVo> listAttrGroupWithAttrsByCatelogId(Long catelogId);
+
+    List<SpuItemAttrGroupVo> getAttrGroupWithAttrsBySpuId(Long spuId, Long catalogId);
 }
 

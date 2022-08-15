@@ -1,6 +1,7 @@
 package com.amu.gulimall.product.service;
 
 import com.amu.gulimall.product.entity.SpuInfoEntity;
+import com.amu.gulimall.product.vo.SkuItemVo;
 import com.amu.gulimall.product.vo.SpuSaveVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.amu.common.utils.PageUtils;
@@ -24,5 +25,6 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
 
     PageUtils queryPageByCondition(Map<String, Object> params);
 
+    SkuItemVo item(Long skuId);
 }
 

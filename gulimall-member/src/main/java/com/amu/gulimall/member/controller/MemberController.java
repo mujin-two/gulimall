@@ -1,10 +1,17 @@
 package com.amu.gulimall.member.controller;
 
+import com.amu.common.exception.BizCodeEnum;
 import com.amu.common.utils.PageUtils;
 import com.amu.common.utils.R;
 import com.amu.gulimall.member.entity.MemberEntity;
+import com.amu.gulimall.member.exception.PhoneExistException;
+import com.amu.gulimall.member.exception.UserNameExistException;
 import com.amu.gulimall.member.service.MemberService;
+import com.amu.gulimall.member.vo.MemberLoginVo;
+import com.amu.gulimall.member.vo.MemberRegistVo;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -26,6 +33,22 @@ public class MemberController {
     private MemberService memberService;
 
 
+    @PostMapping("/regist")
+    public R regist(@RequestBody MemberRegistVo vo) {
+        try {
+            memberService.regist(vo);
+        } catch (PhoneExistException e) {
+            return R.error(BizCodeEnum.PHONE_EXIST_EXCEPTION.getCode(),BizCodeEnum.PHONE_EXIST_EXCEPTION.getMessage());
+        } catch (UserNameExistException e) {
+            return R.error(BizCodeEnum.USER_EXIST_EXCEPTION.getCode(), BizCodeEnum.USER_EXIST_EXCEPTION.getMessage());
+        }
+        return R.ok();
+    }
+
+    @PostMapping("/login")
+    public R login(@RequestBody MemberLoginVo vo) {
+        return memberService.login(vo);
+    }
 
     /**
      * 列表

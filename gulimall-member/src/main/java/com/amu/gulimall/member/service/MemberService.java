@@ -1,5 +1,10 @@
 package com.amu.gulimall.member.service;
 
+import com.amu.common.utils.R;
+import com.amu.gulimall.member.exception.PhoneExistException;
+import com.amu.gulimall.member.exception.UserNameExistException;
+import com.amu.gulimall.member.vo.MemberLoginVo;
+import com.amu.gulimall.member.vo.MemberRegistVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.amu.common.utils.PageUtils;
 import com.amu.gulimall.member.entity.MemberEntity;
@@ -16,5 +21,13 @@ import java.util.Map;
 public interface MemberService extends IService<MemberEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void regist(MemberRegistVo vo);
+
+    void checkUserNameUnique(String userName) throws PhoneExistException;
+
+    void checkPhoneUnique(String phone) throws UserNameExistException;
+
+    R login(MemberLoginVo vo);
 }
 
